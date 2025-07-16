@@ -22,6 +22,8 @@
 
 #define p(...) printf(__VA_ARGS__)
 #define DEL "\n\t \v\f\r"
+#define SHELL_CHILD 0 
+
 void Getcwd(char *, size_t); 
 void *Malloc(size_t);
 void *Realloc(void*, size_t);
@@ -34,6 +36,10 @@ int shell_exit(char**);
 
 void shell_fork_exec(char**);
 void shell_exit_animation(void);
+
+pid_t Fork(void);
+void Execvp(const char *, char *const []);
+pid_t Wait(int *);
 
 typedef struct s_builtin {
     const char *builtin_name;

@@ -7,6 +7,22 @@ t_builtin builtins[] = {
     {.builtin_name=NULL},
 };
 
+// global var to keep track of function statuses
+int status = 0;
+
+
+// function that will take the user input and runa child process if the command is not a built in one
+void shell_fork_exec(char **args){
+    if (Fork() == SHELL_CHILD)
+    {
+        Execvp(args[0], args);
+    } 
+    else 
+    {
+        Wait(&status);
+    }
+}
+
 /*
 * is this a built in command line (call it)
 * or do we need to call a child process to execute this command (use execvp and wait)
@@ -20,13 +36,13 @@ void shell_exec_line(char **args){
 
     while((current = builtins[i].builtin_name)){
         if (!strcmp(current, args[0])){
-            builtins[i].func(args); // TODO function implementations
+            status = builtins[i].func(args); // call function implementation here
             return;
         }
         ++i;
     }
 
-    // shell_fork_exec(args); //TODO shell fork exec 
+    shell_fork_exec(args); //TODO shell fork exec 
 }
 
 

@@ -60,3 +60,51 @@ void shell_exit_animation(void) {
     
     printf("\n\n");
 }
+
+// wrapper fork function that returns a process id unless there was a failure
+pid_t Fork(void)
+{
+    pid_t pid;
+    pid = fork();
+
+    if (pid < 0)
+    {
+        perror(RED"Fork Failed"RST);
+        exit(EXIT_FAILURE);
+    }
+    return pid;
+}
+
+// function wrapper for execvp to check if there are null pointers
+// or handles the execvp function failure
+void Execvp(const char *file, char *const argv[] ){
+    if (!file || !argv){
+        fprintf(stderr, RED"Execvp: Invalid arguments\n"RST);
+        exit(EXIT_FAILURE);
+    }    
+
+    if (execvp(file, argv) == -1)
+    {
+        perror(RED"Child proccess failed"RST);
+        exit(EXIT_FAILURE);
+    }
+}
+
+pid_t Wait(int *status)
+{
+    pid_t result;
+    
+    if (!status)
+    {
+        fprintf(stderr, RED"Wait: status argument required\n"RST);
+        return (-1);
+    }
+    
+    result = wait(status);
+    if (result == -1)
+        perror(RED"Wait failed"RST);
+   
+    if (WIFEXITED(*status))
+        *status = WEXITSTATUS(*status);
+    return (result);
+}
